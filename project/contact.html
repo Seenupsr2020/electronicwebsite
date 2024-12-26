@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 5px;
+        }
+
+        input {
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        input:invalid {
+            border-color: red;
+        }
+
+        .error {
+            color: red;
+            font-size: 12px;
+            margin-top: -8px;
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        .actions button {
+            margin: 0 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .actions .edit {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
+        .actions .delete {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Contact Us</h1>
+    </header>
+
+    <div class="container">
+        <form id="contactForm">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <span class="error" id="emailError"></span>
+
+            <label for="phone">Mobile Number:</label>
+            <input type="text" id="phone" name="phone" required pattern="\d{10}" minlength="10" maxlength="10">
+            <span class="error" id="phoneError"></span>
+
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required minlength="3" maxlength="50">
+            <span class="error" id="nameError"></span>
+
+            <button type="submit">Submit</button>
+        </form>
+
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Mobile Number</th>
+                    <th>Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const contactForm = document.getElementById('contactForm');
+        const dataTable = document.getElementById('dataTable').querySelector('tbody');
+
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const name = document.getElementById('name').value;
+
+            // Validate inputs
+            let valid = true;
+
+            if (!email) {
+                document.getElementById('emailError').textContent = 'Email is required';
+                valid = false;
+            } else {
+                document.getElementById('emailError').textContent = '';
+            }
+
+            if (!phone || phone.length !== 10 || !/\d{10}/.test(phone)) {
+                document.getElementById('phoneError').textContent = 'Valid 10-digit phone number is required';
+                valid = false;
+            } else {
+                document.getElementById('phoneError').textContent = '';
+            }
+
+            if (!name || name.length < 3 || name.length > 50) {
+                document.getElementById('nameError').textContent = 'Name must be between 3 and 50 characters';
+                valid = false;
+            } else {
+                document.getElementById('nameError').textContent = '';
+            }
+
+            if (!valid) return;
+
+            // Add row to table
+            const row = document.createElement('tr');
+
+            row.innerHTML = `
+                <td>${email}</td>
+                <td>${phone}</td>
+                <td>${name}</td>
+                <td class="actions">
+                    <button class="edit">Edit</button>
+                    <button class="delete">Delete</button>
+                </td>
+            `;
+
+            dataTable.appendChild(row);
+
+            // Reset form
+            contactForm.reset();
+
+            // Add edit and delete functionality
+            row.querySelector('.delete').addEventListener('click', () => {
+                dataTable.removeChild(row);
+            });
+
+            row.querySelector('.edit').addEventListener('click', () => {
+                document.getElementById('email').value = email;
+                document.getElementById('phone').value = phone;
+                document.getElementById('name').value = name;
+                dataTable.removeChild(row);
+            });
+        });
+    </script>
+</body>
+</html>
